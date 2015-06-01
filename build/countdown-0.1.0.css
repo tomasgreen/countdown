@@ -1,0 +1,26 @@
+.countdown {
+  background: maroon no-repeat center center;
+  background-size: cover;
+  padding: 60px 8px;
+  /*justify-content: center;
+	display: flex;
+	align-items: center;
+	text-align: center;*/
+  /*.light {
+		color: black;
+	}
+	.dark {
+		color: white;
+	}*/
+}
+.countdown .content .text {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.countdown .content .unit {
+  font-size: 17px;
+  opacity: 0.7;
+}
+.countdown .content .time {
+  font-size: 20px;
+}

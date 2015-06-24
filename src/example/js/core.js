@@ -8,7 +8,9 @@
 			datetime: "2015-07-03 16:00:00",
 			done: "Nu jävlar är det semester",
 			lang: "sv",
-			theme: "dark",
+			theme: "white",
+			bg: 'http://static.giantbomb.com/uploads/original/14/148096/2384107-wallpaper_668504.jpg',
+			bgPosition: 'bottom',
 			unittype: ""
 		};
 		new Countdown(el, options);

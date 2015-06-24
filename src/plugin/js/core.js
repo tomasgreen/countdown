@@ -24,22 +24,22 @@
 		en: {
 			day: 'day',
 			dayFull: 'day',
-			dayFullPlu: 'days',
+			dayFullPlu: 'day',
 			year: 'year',
 			yearFull: 'year',
-			yearFullPlu: 'years',
+			yearFullPlu: 'year',
 			month: 'mon',
 			monthFull: 'month',
-			monthFullPlu: 'months',
+			monthFullPlu: 'month',
 			hour: 'hour',
 			hourFull: 'hour',
-			hourFullPlu: 'hours',
+			hourFullPlu: 'hour',
 			minute: 'min',
 			minuteFull: 'minute',
-			minuteFullPlu: 'minutes',
+			minuteFullPlu: 'minute',
 			second: 'sec',
 			secondFull: 'second',
-			secondFullPlu: 'seconds'
+			secondFullPlu: 'second'
 		}
 	};
 	var ms = {};
@@ -50,25 +50,32 @@
 	ms.month = ms.day * 30;
 	ms.year = ms.day * 365;
 
-	function _createElement(type, attr, parent, html) {
-		var el, cls, id, arr;
+	function _createElement(name, attr, parent, html) {
+		var el, arr;
 		if (!attr) attr = {};
-		if (type.indexOf('.') !== -1) {
-			arr = type.split('.');
-			type = arr[0];
+		if (name.indexOf('.') !== -1) {
+			arr = name.split('.');
+			name = arr[0];
 			arr.shift();
 			attr.class = arr.join(' ');
 		}
-		if (type.indexOf('#') !== -1) {
-			arr = type.split('#');
-			type = arr[0];
+		if (name.indexOf('#') !== -1) {
+			arr = name.split('#');
+			name = arr[0];
 			attr.id = arr[1];
 		}
-		el = document.createElement(type);
+		el = document.createElement(name);
 		for (var i in attr) el.setAttribute(i, attr[i]);
 		if (parent) parent.appendChild(el);
 		if (html) el.innerHTML = html;
 		return el;
+	}
+
+	function _attr(els, attrib, value) {
+		if (value === undefined && els && els.getAttribute !== undefined) return els.getAttribute(attrib);
+		_each(els, function (el) {
+			el.setAttribute(attrib, value);
+		});
 	}
 
 	function _setOptions(opt) {
@@ -105,7 +112,8 @@
 		datetime: null,
 		lang: 'sv',
 		done: null,
-		bg: '',
+		bg: null,
+		bgPosition: 'center',
 		theme: 'light',
 		unittype: ''
 	};
@@ -114,7 +122,8 @@
 		this.opt = _setOptions(options);
 		if (!el) return;
 		this.container = el;
-		this.container.style.backgroundImage = 'url(' + this.opt.bg + ')';
+		if(this.opt.bg) this.container.style.backgroundImage = 'url(' + this.opt.bg + ')';
+		if(this.opt.bg && this.opt.bgPosition) this.container.style.backgroundPosition = this.opt.bgPosition; 
 		this.contentEl = _createElement('div.content', null, this.container);
 		this.textEl = _createElement('div.text', null, this.contentEl);
 		this.tickerEl = _createElement('div.ticker', null, this.contentEl);
@@ -135,8 +144,15 @@
 		}
 		_addClass(this.contentEl, this.opt.theme);
 		this.textEl.innerHTML = this.opt.title;
+		this.units = ['year','month','day','hour','minute','second'];
+		for(var u in this.units) {
+			var unit = this.units[u];
+			_createElement('span.time', {
+				'data-unit': unit 
+			},this.tickerEl);
+		}
 		this.ticker();
-		this.interval = setInterval(this.ticker.bind(this), 1000);
+		this.interval = setInterval(this.ticker.bind(this), 100);
 	};
 	Base.prototype.getUnitText = function(value, unit, type) {
 		if (type == 'full') {
@@ -145,26 +161,38 @@
 		}
 		return langs[this.opt.lang][unit];
 	};
+	Base.prototype.showUnit = function(computed,unit){
+		var el = this.tickerEl.querySelector('[data-unit="'+ unit +'"]');
+		if (this.show || computed[unit] > 0 ) {
+			if(el.textContent !== computed[unit].toString()) {
+				el.textContent = computed[unit];
+				this.show = true;
+				_attr(el, 'data-unit-text', this.getUnitText(computed[unit], unit, this.opt.unittype));
+			}
+		} else {
+			el.textContent = '';
+			_attr(el, 'data-unit-text', '');
+		}
+	};
 	Base.prototype.ticker = function() {
 		var now = new Date();
 		var diff = this.time - now.getTime();
 		var diff2 = diff;
 		var computed = {};
-		computed.years = Math.floor(diff2 / ms.year);
-		diff2 -= computed.years * ms.year;
-		computed.months = Math.floor(diff2 / ms.month);
-		diff2 -= computed.months * ms.month;
-		computed.days = Math.floor(diff2 / ms.day);
-		diff2 -= computed.days * ms.day;
-		computed.hours = Math.floor(diff2 / ms.hour);
-		diff2 -= computed.hours * ms.hour;
-		computed.minutes = Math.floor(diff2 / ms.minute);
-		diff2 -= computed.minutes * ms.minute;
-		computed.seconds = Math.floor(diff2 / ms.second);
+		computed.year = Math.floor(diff2 / ms.year);
+		diff2 -= computed.year * ms.year;
+		computed.month = Math.floor(diff2 / ms.month);
+		diff2 -= computed.month * ms.month;
+		computed.day = Math.floor(diff2 / ms.day);
+		diff2 -= computed.day * ms.day;
+		computed.hour = Math.floor(diff2 / ms.hour);
+		diff2 -= computed.hour * ms.hour;
+		computed.minute = Math.floor(diff2 / ms.minute);
+		diff2 -= computed.minute * ms.minute;
+		computed.second = Math.floor(diff2 / ms.second);
 
 		if (diff < 0) {
 			if (this.interval) clearInterval(this.interval);
-			this.tickerEl.innerHTML = this.opt.done ? '' : 'NU!!!';
 			if (this.opt.done) this.textEl.innerHTML = this.opt.done;
 			if (!this.countDownFinished && this.utterance) {
 				this.countDownFinished = true;
@@ -172,49 +200,22 @@
 			}
 			return;
 		}
-		var html = '';
-		var c = false;
-		if (computed.years) {
-			html += '<span class="time">' + computed.years + '</span>';
-			html += '<span class="unit">' + this.getUnitText(computed.years, 'year', this.opt.unittype) + '</span> ';
-			c = true;
+		this.show = false;
+		for(var u in this.units) {
+			this.showUnit(computed,this.units[u]);
 		}
-		if (c || computed.months) {
-			html += '<span class="time">' + computed.months + '</span>';
-			html += '<span class="unit">' + this.getUnitText(computed.months, 'month', this.opt.unittype) + '</span> ';
-			c = true;
-		}
-		if (c || computed.days) {
-			html += '<span class="time">' + computed.days + '</span>';
-			html += '<span class="unit">' + this.getUnitText(computed.days, 'day', this.opt.unittype) + '</span> ';
-			c = true;
-		}
-		if (c || computed.hours) {
-			html += '<span class="time">' + computed.hours + '</span>';
-			html += '<span class="unit">' + this.getUnitText(computed.hours, 'hour', this.opt.unittype) + '</span> ';
-			c = true;
-		}
-		if (c || computed.minutes) {
-			html += '<span class="time">' + computed.minutes + '</span>';
-			html += '<span class="unit">' + this.getUnitText(computed.minutes, 'minute', this.opt.unittype) + '</span> ';
-			c = true;
-		}
-		if (c || computed.seconds) {
-			html += '<span class="time">' + computed.seconds + '</span>';
-			html += '<span class="unit">' + this.getUnitText(computed.seconds, 'second', this.opt.unittype) + '</span> ';
-		}
-		this.tickerEl.innerHTML = html;
+
 		if (diff / 1000 < 11 && !this.countDownInitiated) {
 			this.countDownInitiated = true;
 			var countDownText = '';
-			for (var i = computed.seconds; i > 0; i--) {
+			for (var i = computed.second; i > 0; i--) {
 				countDownText += i + '. ';
 			}
 			var countDownUtterance = new SpeechSynthesisUtterance(countDownText);
 			countDownUtterance.lang = (this.opt.lang == 'sv') ? 'sv-SE' : 'en-US';
-			countDownUtterance.rate = 0.6;
+			countDownUtterance.rate = 0.7;
 			window.speechSynthesis.speak(countDownUtterance);
-		} else if (computed.seconds > 10) {
+		} else if (computed.second > 10) {
 			this.countDownInitiated = false;
 		}
 	};

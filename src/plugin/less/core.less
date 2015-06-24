@@ -1,28 +1,25 @@
 .countdown {
-	background: maroon no-repeat center center;
 	background-size: cover;
-	padding: 60px 8px;
-	/*justify-content: center;
+	justify-content: center;
 	display: flex;
 	align-items: center;
-	text-align: center;*/
-	.content {
-		.text {
-			font-size: 20px;
-			margin-bottom: 8px;
-		}
-		.unit {
-			font-size: 17px;
-			opacity: 0.7;
-		}
-		.time {
-			font-size: 20px;
-		}
+	text-align: center;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizelegibility;
+	font-size: 20px;
+	.text {
+		margin-bottom: 8px;
 	}
-	/*.light {
-		color: black;
+	.time:empty,.done:empty {
+		display: none;
 	}
-	.dark {
-		color: white;
-	}*/
+	.time {
+		margin-right: 4px;
+	}
+	.time:after {
+		padding-left: 2px; 
+		content: attr(data-unit-text);
+		font-size: 17px;
+		opacity: 0.7;
+	}
 }

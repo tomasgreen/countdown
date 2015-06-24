@@ -6,11 +6,20 @@
 @import "animations";
 
 body {
-
+	padding: 0px;
+	margin: 0px;
 }
 
 body,input,button {
-	font-family: 'Helvetica Neue', 'Open Sans', 'Helvetica', 'Arial', sans-serif;
+	font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 	font-size: 15px;
 	font-weight: 300;
+}
+.countdown {
+	height: 100vh;
+	text-shadow: 0px 0px 5px rgba(0,0,0, 0.2);
+	font-size: 8vw;
+	.time:after {
+		font-size: 6vw;
+	}
 }

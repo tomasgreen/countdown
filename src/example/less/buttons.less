@@ -38,18 +38,17 @@
 	.@{name} {
 		color: contrast(@color);
 		background-color:  @color;
-		border: 1px solid darken(@color, 5%)
+		border: none;
 	}
 	.@{name}:not([disabled]):active,.@{name}:not([disabled]):focus {
-		box-shadow: 0px 0px 4px 0px darken(@color, 10%);
+		box-shadow: 0px 0px 4px 0px darken(@color, 5%);
 	}
 	.@{name}:not([disabled]):hover {
-		background-color: darken(@color, 10%);
-		border: 1px solid darken(@color, 20%);
+		background-color: darken(@color, 5%);
+		border: none;
 	}
 	.@{name}:not([disabled]):active {
-		background-color: darken(@color, 15%);
-		border: 1px solid darken(@color, 25%);
+		background-color: darken(@color, 7%);
+		border: none;
 	}
 }
-.create-btn(btn-green; @shade1);

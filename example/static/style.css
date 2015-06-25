@@ -294,22 +294,25 @@
 .btn:not([disabled]):focus {
   box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
 }
-.btn-green {
-  color: #ffffff;
-  background-color: #468966;
-  border: 1px solid #3d7859;
+@-webkit-keyframes hue {
+  from {
+    -webkit-filter: hue-rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  to {
+    -webkit-filter: hue-rotate(-360deg);
+    filter: hue-rotate(-360deg);
+  }
 }
-.btn-green:not([disabled]):active,
-.btn-green:not([disabled]):focus {
-  box-shadow: 0px 0px 4px 0px #35674d;
-}
-.btn-green:not([disabled]):hover {
-  background-color: #35674d;
-  border: 1px solid #244534;
-}
-.btn-green:not([disabled]):active {
-  background-color: #2c5640;
-  border: 1px solid #1b3527;
+@keyframes hue {
+  from {
+    -webkit-filter: hue-rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  to {
+    -webkit-filter: hue-rotate(-360deg);
+    filter: hue-rotate(-360deg);
+  }
 }
 body {
   padding: 0px;
@@ -325,8 +328,102 @@ button {
 .countdown {
   height: 100vh;
   text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  font-size: 8vw;
+  font-size: 7vw;
 }
 .countdown .time:after {
-  font-size: 6vw;
+  font-size: 5vw;
+}
+.countdown[data-unittype="full"] {
+  font-size: 5vw;
+}
+.countdown[data-unittype="full"] .time:after {
+  font-size: 3vw;
+}
+.countdown .content:after {
+  font-size: 2vw;
+  content: 'Med ❤ av Rasmus Jansson & Tomas Green';
+}
+.form {
+  box-sizing: border-box;
+  padding: 20px;
+  min-height: 100vh;
+  width: 100%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+  background-color: #005b7f;
+  /*105B63*/
+  -webkit-animation: hue 60s infinite linear;
+  animation: hue 60s infinite linear;
+  text-align: center;
+}
+.form .content {
+  margin: 0px auto;
+  width: 300px;
+}
+.form .content input {
+  text-align: center;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  color: #ffffff;
+  width: 100%;
+  padding: 8px 0px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+.form .content input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.form .content input:-moz-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.form .content input::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.form .content input:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.form .btn-form {
+  color: #ffffff;
+  background-color: #00b28b;
+  border: none;
+}
+.form .btn-form:not([disabled]):active,
+.form .btn-form:not([disabled]):focus {
+  box-shadow: 0px 0px 4px 0px #009977;
+}
+.form .btn-form:not([disabled]):hover {
+  background-color: #009977;
+  border: none;
+}
+.form .btn-form:not([disabled]):active {
+  background-color: #008e6f;
+  border: none;
+}
+.form .btn-form {
+  -webkit-animation: hue 60s infinite linear;
+  animation: hue 60s infinite linear;
+  margin-top: 20px;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+@media screen and (max-width: 600px) {
+  .form .content {
+    width: 100%;
+  }
 }

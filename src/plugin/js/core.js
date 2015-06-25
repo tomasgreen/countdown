@@ -103,27 +103,37 @@
 	}
 
 	/* ************************************
-	############## MY PLUGIN ##############
+	############## COUNTDOWN ##############
 	************************************ */
 
 	var defaults = {
 		title: null,
-		el: null,
 		datetime: null,
+		minutes: null,
 		lang: 'sv',
 		done: null,
-		bg: null,
-		bgPosition: 'center',
-		theme: 'light',
+		backgroundImage: null,
+		backgroundColor: null,
+		backgroundPosition: 'center',
+		color: '#fff',
 		unittype: ''
 	};
 
 	var Base = function(el, options) {
 		this.opt = _setOptions(options);
+		console.log(options);
 		if (!el) return;
 		this.container = el;
-		if(this.opt.bg) this.container.style.backgroundImage = 'url(' + this.opt.bg + ')';
-		if(this.opt.bg && this.opt.bgPosition) this.container.style.backgroundPosition = this.opt.bgPosition; 
+		if(this.opt.backgroundColor) this.container.style.backgroundColor = this.opt.backgroundColor;
+		if(this.opt.backgroundImage) {
+			_addClass(this.container,'countdown-img');
+			var i = new Image();
+			i.onload = function () {	
+				this.container.style.backgroundImage = 'url(' + this.opt.backgroundImage + ')';
+			}.bind(this);
+			i.src = this.opt.backgroundImage;
+			if(this.opt.backgroundPosition) this.container.style.backgroundPosition = this.opt.backgroundPosition;
+		}
 		this.contentEl = _createElement('div.content', null, this.container);
 		this.textEl = _createElement('div.text', null, this.contentEl);
 		this.tickerEl = _createElement('div.ticker', null, this.contentEl);
@@ -137,12 +147,14 @@
 			if (tmp.length > 0) this.time.setHours(parseInt(tmp[0]));
 			if (tmp.length > 1) this.time.setMinutes(parseInt(tmp[1]));
 			if (tmp.length > 2) this.time.setSeconds(parseInt(tmp[2]));
+		} else if(this.opt.minutes) {
+			this.time = new Date(this.time.getTime() + this.opt.minutes*60000);
 		}
 		if (this.opt.done) {
 			this.utterance = new SpeechSynthesisUtterance(this.opt.done);
 			this.utterance.lang = (this.opt.lang == 'sv') ? 'sv-SE' : 'en-US';
 		}
-		_addClass(this.contentEl, this.opt.theme);
+		if(this.opt.color) this.container.style.color = this.opt.color;
 		this.textEl.innerHTML = this.opt.title;
 		this.units = ['year','month','day','hour','minute','second'];
 		for(var u in this.units) {
@@ -151,6 +163,7 @@
 				'data-unit': unit 
 			},this.tickerEl);
 		}
+		_attr(this.container,'data-unittype',this.opt.unittype);
 		this.ticker();
 		this.interval = setInterval(this.ticker.bind(this), 100);
 	};
@@ -163,10 +176,10 @@
 	};
 	Base.prototype.showUnit = function(computed,unit){
 		var el = this.tickerEl.querySelector('[data-unit="'+ unit +'"]');
-		if (this.show || computed[unit] > 0 ) {
+		if (this.show || computed[unit] > 0) {
+			this.show = true;
 			if(el.textContent !== computed[unit].toString()) {
 				el.textContent = computed[unit];
-				this.show = true;
 				_attr(el, 'data-unit-text', this.getUnitText(computed[unit], unit, this.opt.unittype));
 			}
 		} else {
@@ -190,7 +203,7 @@
 		computed.minute = Math.floor(diff2 / ms.minute);
 		diff2 -= computed.minute * ms.minute;
 		computed.second = Math.floor(diff2 / ms.second);
-
+		
 		if (diff < 0) {
 			if (this.interval) clearInterval(this.interval);
 			if (this.opt.done) this.textEl.innerHTML = this.opt.done;
